@@ -1,28 +1,23 @@
 public class LutadorPesado extends lutador {
 
     public LutadorPesado(String nome) {
-        super(nome, 140, 100, 20, 15); 
-    }
-
-    @Override
-    public void atacar(lutador oponente) {
-        int dano = getForca() + 5; // pesado bate mais forte
-        oponente.receberDano(dano);
-        System.out.println(getNome() + " atacou (pesado) causando " + dano + " de dano!");
+        super(nome, 140, 100, 20, 15, 100);
     }
 
     @Override
     public void especial(lutador oponente) {
-        if (getEnergia() < 30) {
-            System.out.println(getNome() + " não tem energia para o especial!");
+        int custo = 30;
+
+        if (energia < custo) {
+            System.out.println(nome + " não tem energia para o especial!");
             return;
         }
 
-        setEnergia(getEnergia() - 30);
+        energia -= custo;
 
-        int dano = getForca() * 4;
+        int dano = forca * 4;
         oponente.receberDano(dano);
 
-        System.out.println(getNome() + " usou o ESPECIAL PESADO causando " + dano + " de dano!");
+        System.out.println(nome + " usou ESPECIAL PESADO causando " + dano + " de dano!");
     }
 }
