@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -11,8 +12,24 @@ public class main {
         System.out.print("Digite o nome do seu lutador: ");
         String nomeJogador = sc.nextLine();
 
-        System.out.print("Escolha o tipo (1-Leve, 2-Médio, 3-Pesado): ");
-        int tipo = sc.nextInt();
+        int tipo = 0;
+
+        // Entrada protegida
+        do {
+            try {
+                System.out.print("Escolha o tipo (1-Leve, 2-Médio, 3-Pesado): ");
+                tipo = sc.nextInt();
+
+                if (tipo < 1 || tipo > 3) {
+                    System.out.println("Opção inválida!");
+                    tipo = 0;
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Por favor, digite apenas números!");
+                sc.nextLine(); 
+            }
+        } while (tipo == 0);
 
         lutador jogador;
 
@@ -20,42 +37,48 @@ public class main {
             case 1: jogador = new LutadorLeve(nomeJogador); break;
             case 2: jogador = new LutadorMedio(nomeJogador); break;
             case 3: jogador = new LutadorPesado(nomeJogador); break;
-            default:
-                System.out.println("Tipo inválido, escolhendo Médio.");
-                jogador = new LutadorMedio(nomeJogador);
+            default: jogador = new LutadorMedio(nomeJogador);
         }
 
-        // Oponente fixo
         lutador oponente = new LutadorPesado("Oponente");
 
-        // Mostrar status inicial
         System.out.println("\n===== STATUS INICIAL =====");
         jogador.mostrarStatus();
         oponente.mostrarStatus();
 
-        // LOOP DE BATALHA 
+        // LOOP DE BATALHA
         while (jogador.estaVivo() && oponente.estaVivo()) {
 
-            System.out.println("\n===== SUA VEZ =====");
-            System.out.println("Escolha a ação:");
-            System.out.println("1 - Ataque Normal");
-            System.out.println("2 - Golpe Especial");
-            System.out.println("3 - Defesa");
-            System.out.print("Escolha: ");
-            int acao = sc.nextInt();
+            int acao = 0;
 
+            // Proteção da ação do jogador
+            do {
+                try {
+                    System.out.println("\n===== SUA VEZ =====");
+                    System.out.println("1 - Ataque Normal");
+                    System.out.println("2 - Golpe Especial");
+                    System.out.println("3 - Defesa");
+                    System.out.print("Escolha: ");
+
+                    acao = sc.nextInt();
+
+                    if (acao < 1 || acao > 3) {
+                        System.out.println("Opção inválida!");
+                        acao = 0;
+                    }
+
+                } catch (InputMismatchException e) {
+                    System.out.println("Digite apenas números!");
+                    sc.nextLine();
+                }
+
+            } while (acao == 0);
+
+            // EXECUTAR AÇÃO DO JOGADOR
             switch (acao) {
-                case 1:
-                    jogador.atacar(oponente);
-                    break;
-                case 2:
-                    jogador.especial(oponente);
-                    break;
-                case 3:
-                    jogador.defender();
-                    break;
-                default:
-                    System.out.println("Ação inválida! Perdeu o turno.");
+                case 1: jogador.atacar(oponente); break;
+                case 2: jogador.especial(oponente); break;
+                case 3: jogador.defender(); break;
             }
 
             if (!oponente.estaVivo()) break;
@@ -65,13 +88,9 @@ public class main {
 
             int acaoOp = rnd.nextInt(3) + 1;
 
-            if (acaoOp == 1) {
-                oponente.atacar(jogador);
-            } else if (acaoOp == 2) {
-                oponente.especial(jogador);
-            } else {
-                oponente.defender();
-            }
+            if (acaoOp == 1) oponente.atacar(jogador);
+            else if (acaoOp == 2) oponente.especial(jogador);
+            else oponente.defender();
 
             if (!jogador.estaVivo()) break;
 
@@ -83,11 +102,9 @@ public class main {
         System.out.println("\n===== FIM DA BATALHA =====");
 
         if (jogador.estaVivo()) {
-            System.out.println(jogador.nome + " VENCEU!");
+            System.out.println(jogador.nome + " venceu!");
         } else {
             System.out.println(oponente.nome + " venceu!");
         }
-
-        sc.close();
     }
 }
